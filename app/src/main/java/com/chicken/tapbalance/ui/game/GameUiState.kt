@@ -20,5 +20,6 @@ data class GameUiState(
 data class LeafState(
     val xFraction: Float,
     val yFraction: Float,
-    val speed: Float
+    val speed: Float,
+    val rotation: Float
 )

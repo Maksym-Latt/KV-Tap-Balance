@@ -28,15 +28,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chicken.tapbalance.R
 import com.chicken.tapbalance.ui.components.AppButton
 import com.chicken.tapbalance.ui.components.Fence
+import com.chicken.tapbalance.ui.components.FenceHeight
 import com.chicken.tapbalance.ui.components.OutlineText
 import com.chicken.tapbalance.ui.components.SkyBackground
-import com.chicken.tapbalance.ui.theme.TextStroke
-import com.chicken.tapbalance.ui.theme.TextWhite
 
 @Composable
 fun MenuScreen(
@@ -52,9 +52,12 @@ fun MenuScreen(
     SkyBackground {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
-                    modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp, vertical = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .padding(bottom = FenceHeight - 6.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
                 TopBar(uiState)
 
@@ -65,8 +68,8 @@ fun MenuScreen(
                 }
 
                 Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     AppButton(text = "Play", modifier = Modifier.fillMaxWidth(0.8f)) { onPlay() }
                     AppButton(text = "Skins", modifier = Modifier.fillMaxWidth(0.7f)) { onSkins() }
@@ -74,9 +77,9 @@ fun MenuScreen(
                         showSettings = true
                     }
                 }
-
-                Fence(modifier = Modifier.padding(bottom = 8.dp))
             }
+
+            Fence(modifier = Modifier.align(Alignment.BottomCenter))
         }
 
         if (showSettings) {
@@ -95,24 +98,18 @@ fun MenuScreen(
 private fun TitleLogo() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         OutlineText(
-                text = "CHICKEN",
-                color = TextWhite,
-                outlineColor = TextStroke,
-                fontSize = 36.sp
+            text = "CHICKEN",
+            fontSize = 36.sp
         )
         OutlineText(
-                text = "TAP",
-                color = TextWhite,
-                outlineColor = TextStroke,
-                fontSize = 36.sp,
-                modifier = Modifier.padding(top = 4.dp)
+            text = "TAP",
+            fontSize = 36.sp,
+            modifier = Modifier.padding(top = 4.dp)
         )
         OutlineText(
-                text = "BALANCE",
-                color = TextWhite,
-                outlineColor = TextStroke,
-                fontSize = 36.sp,
-                modifier = Modifier.padding(top = 4.dp)
+            text = "BALANCE",
+            fontSize = 36.sp,
+            modifier = Modifier.padding(top = 4.dp)
         )
     }
 }
@@ -150,16 +147,14 @@ private fun TopBar(uiState: MenuUiState) {
     ) {
         Column(horizontalAlignment = Alignment.End) {
             OutlineText(
-                    text = "Best: ${(uiState.bestScoreMs / 1000.0).formatSeconds()}s",
-                    color = TextWhite,
-                    outlineColor = TextStroke,
-                    fontSize = 16.sp
+                text = "Best: ${(uiState.bestScoreMs / 1000.0).formatSeconds()}s",
+                fontSize = 16.sp,
+                textAlign = TextAlign.End
             )
             OutlineText(
-                    text = "Points: ${uiState.points}",
-                    color = TextWhite,
-                    outlineColor = TextStroke,
-                    fontSize = 16.sp
+                text = "Points: ${uiState.points}",
+                fontSize = 16.sp,
+                textAlign = TextAlign.End
             )
         }
     }

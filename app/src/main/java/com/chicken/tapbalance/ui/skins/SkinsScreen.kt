@@ -17,8 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,12 +34,12 @@ import androidx.compose.ui.unit.sp
 import com.chicken.tapbalance.data.ChickenSkinState
 import com.chicken.tapbalance.model.ChickenSkin
 import com.chicken.tapbalance.ui.components.AppButton
+import com.chicken.tapbalance.ui.components.AppIconButton
 import com.chicken.tapbalance.ui.components.OutlineText
 import com.chicken.tapbalance.ui.components.SkyBackground
+import com.chicken.tapbalance.ui.theme.AppGradients
 import com.chicken.tapbalance.ui.theme.ButtonBlue
 import com.chicken.tapbalance.ui.theme.ButtonBlueDark
-import com.chicken.tapbalance.ui.theme.TextStroke
-import com.chicken.tapbalance.ui.theme.TextWhite
 
 @Composable
 fun SkinsScreen(
@@ -65,13 +64,13 @@ fun SkinsScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onBack) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
-                }
+                AppIconButton(
+                    painter = rememberVectorPainter(image = Icons.Default.ArrowBack),
+                    contentDescription = "Back",
+                    onClick = onBack
+                )
                 OutlineText(
                     text = "Points: ${uiState.points}",
-                    color = TextWhite,
-                    outlineColor = TextStroke,
                     fontSize = 18.sp
                 )
             }
@@ -122,8 +121,6 @@ private fun SkinCard(
     ) {
         OutlineText(
             text = state.skin.title,
-            color = TextWhite,
-            outlineColor = TextStroke,
             fontSize = 18.sp
         )
         Image(

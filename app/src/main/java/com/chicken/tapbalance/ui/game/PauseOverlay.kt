@@ -16,10 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chicken.tapbalance.ui.components.AppButton
 import com.chicken.tapbalance.ui.components.OutlineText
+import com.chicken.tapbalance.ui.theme.AppGradients
 import com.chicken.tapbalance.ui.theme.OverlayDim
-import com.chicken.tapbalance.ui.theme.PanelBlue
-import com.chicken.tapbalance.ui.theme.TextStroke
-import com.chicken.tapbalance.ui.theme.TextWhite
 
 @Composable
 fun PauseOverlay(
@@ -39,15 +37,13 @@ fun PauseOverlay(
     ) {
         Column(
             modifier = Modifier
-                .background(PanelBlue, RoundedCornerShape(18.dp))
+                .background(AppGradients.panel, RoundedCornerShape(18.dp))
                 .padding(horizontal = 22.dp, vertical = 18.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             OutlineText(
                 text = "Paused",
-                color = TextWhite,
-                outlineColor = TextStroke,
                 fontSize = 22.sp
             )
             ToggleRow("Music", musicEnabled) { onMusicToggle(!musicEnabled) }
@@ -68,8 +64,6 @@ private fun ToggleRow(label: String, enabled: Boolean, onToggle: () -> Unit) {
     ) {
         OutlineText(
             text = label,
-            color = TextWhite,
-            outlineColor = TextStroke,
             fontSize = 16.sp
         )
         AppButton(

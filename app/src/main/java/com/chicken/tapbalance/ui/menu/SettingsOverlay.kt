@@ -21,10 +21,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chicken.tapbalance.ui.components.OutlineText
+import com.chicken.tapbalance.ui.theme.AppGradients
 import com.chicken.tapbalance.ui.theme.ButtonOrange
 import com.chicken.tapbalance.ui.theme.ButtonOrangeDark
-import com.chicken.tapbalance.ui.theme.TextStroke
-import com.chicken.tapbalance.ui.theme.TextWhite
 
 @Composable
 fun SettingsOverlay(
@@ -60,10 +59,8 @@ fun SettingsOverlay(
                 horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlineText(
-                    text = "SETTINGS",
-                    color = TextWhite,
-                    outlineColor = TextStroke,
-                    fontSize = 24.sp
+                text = "SETTINGS",
+                fontSize = 24.sp
             )
 
             Row(
@@ -71,11 +68,9 @@ fun SettingsOverlay(
                     verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlineText(
-                        text = "Music",
-                        color = TextWhite,
-                        outlineColor = TextStroke,
-                        fontSize = 18.sp,
-                        modifier = Modifier.weight(1f)
+                    text = "Music",
+                    fontSize = 18.sp,
+                    modifier = Modifier.weight(1f)
                 )
                 ToggleCircle(enabled = musicEnabled) { onMusicToggle(!musicEnabled) }
             }
@@ -85,11 +80,9 @@ fun SettingsOverlay(
                     verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlineText(
-                        text = "Sounds",
-                        color = TextWhite,
-                        outlineColor = TextStroke,
-                        fontSize = 18.sp,
-                        modifier = Modifier.weight(1f)
+                    text = "Sounds",
+                    fontSize = 18.sp,
+                    modifier = Modifier.weight(1f)
                 )
                 ToggleCircle(enabled = sfxEnabled) { onSfxToggle(!sfxEnabled) }
             }
@@ -110,10 +103,9 @@ private fun ToggleCircle(enabled: Boolean, onToggle: () -> Unit) {
             contentAlignment = Alignment.Center
     ) {
         OutlineText(
-                text = if (enabled) "ON" else "OFF",
-                color = TextWhite,
-                outlineColor = TextStroke,
-                fontSize = 12.sp
+            text = if (enabled) "ON" else "OFF",
+            fontSize = 12.sp,
+            fillBrush = if (enabled) AppGradients.textFill else AppGradients.disabledText
         )
     }
 }

@@ -15,10 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chicken.tapbalance.ui.components.AppButton
 import com.chicken.tapbalance.ui.components.OutlineText
+import com.chicken.tapbalance.ui.theme.AppGradients
 import com.chicken.tapbalance.ui.theme.OverlayDim
-import com.chicken.tapbalance.ui.theme.PanelBlue
-import com.chicken.tapbalance.ui.theme.TextStroke
-import com.chicken.tapbalance.ui.theme.TextWhite
 
 
 @Composable
@@ -35,28 +33,22 @@ fun GameOverOverlay(
     ) {
         Column(
             modifier = Modifier
-                .background(PanelBlue, RoundedCornerShape(18.dp))
+                .background(AppGradients.panel, RoundedCornerShape(18.dp))
                 .padding(horizontal = 22.dp, vertical = 18.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             OutlineText(
                 text = "YOU LOST\nBALANCE!",
-                color = TextWhite,
-                outlineColor = TextStroke,
                 fontSize = 26.sp,
                 maxLines = 2
             )
             OutlineText(
                 text = "Survival Time: ${(state.survivalTimeMs / 1000.0).formatSeconds()}s",
-                color = TextWhite,
-                outlineColor = TextStroke,
                 fontSize = 18.sp
             )
             OutlineText(
                 text = "Best: ${(state.bestScoreMs / 1000.0).formatSeconds()}s",
-                color = TextWhite,
-                outlineColor = TextStroke,
                 fontSize = 18.sp
             )
             AppButton(text = "Try Again", modifier = Modifier.fillMaxWidth()) { onTryAgain() }

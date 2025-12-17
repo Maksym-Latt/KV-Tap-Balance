@@ -1,8 +1,5 @@
 package com.chicken.tapbalance.navigation
 
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -12,10 +9,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.chicken.tapbalance.ui.game.GameScreen
 import com.chicken.tapbalance.ui.game.GameViewModel
+import com.chicken.tapbalance.ui.intro.IntroScreen
 import com.chicken.tapbalance.ui.menu.MenuScreen
 import com.chicken.tapbalance.ui.menu.MenuViewModel
 import com.chicken.tapbalance.ui.skins.SkinsScreen
 import com.chicken.tapbalance.ui.skins.SkinsViewModel
+import com.chicken.tapbalance.ui.splash.SplashScreen
 
 @Composable
 fun AppNavHost(
@@ -24,17 +23,37 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AppDestination.Menu.route,
+        startDestination = AppDestination.Splash.route,
         modifier = modifier
     ) {
+        composable(AppDestination.Splash.route) {
+            SplashScreen(
+                onFinished = {
+                    navController.navigate(AppDestination.Menu.route) {
+                        popUpTo(AppDestination.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
         composable(AppDestination.Menu.route) {
             val viewModel: MenuViewModel = hiltViewModel()
             MenuScreen(
                 state = viewModel.uiState,
-                onPlay = { navController.navigate(AppDestination.Game.route) },
+                onPlay = { navController.navigate(AppDestination.Intro.route) },
                 onSkins = { navController.navigate(AppDestination.Skins.route) },
                 onMusicToggle = viewModel::setMusicEnabled,
                 onSfxToggle = viewModel::setSfxEnabled
+            )
+        }
+        composable(AppDestination.Intro.route) {
+            IntroScreen(
+                onStart = {
+                    navController.navigate(AppDestination.Game.route) {
+                        popUpTo(AppDestination.Menu.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onBack = { navController.popBackStack() }
             )
         }
         composable(AppDestination.Game.route) {

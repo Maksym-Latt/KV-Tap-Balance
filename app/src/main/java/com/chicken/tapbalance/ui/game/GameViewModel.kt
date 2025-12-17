@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chicken.tapbalance.core.audio.AudioController
 import com.chicken.tapbalance.data.GameRepository
+import com.chicken.tapbalance.ui.game.GameConstants.CHICKEN_TILT_FOR_FALL
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -143,7 +144,7 @@ class GameViewModel @Inject constructor(
             val newTime = _uiState.value.survivalTimeMs + (frameDelay)
             val updatedLeaves = updateLeaves()
 
-            if (abs(newAngle) >= 55f) {
+            if (abs(newAngle) >= CHICKEN_TILT_FOR_FALL) {
                 handleGameOver(newTime)
             } else {
                 _uiState.update { state ->
@@ -177,10 +178,16 @@ class GameViewModel @Inject constructor(
         val leaves = _uiState.value.leaves.ifEmpty { spawnLeaves() }
         return leaves.map { leaf ->
             val newY = leaf.yFraction + leaf.speed
+            val newRotation = (leaf.rotation + (leaf.speed * 360f)) % 360f
             if (newY > 1f) {
-                leaf.copy(xFraction = Random.nextFloat(), yFraction = 0f, speed = 0.002f + Random.nextFloat() * 0.004f)
+                leaf.copy(
+                    xFraction = Random.nextFloat(),
+                    yFraction = 0f,
+                    speed = 0.002f + Random.nextFloat() * 0.004f,
+                    rotation = Random.nextFloat() * 360f
+                )
             } else {
-                leaf.copy(yFraction = newY)
+                leaf.copy(yFraction = newY, rotation = newRotation)
             }
         }
     }
@@ -189,7 +196,8 @@ class GameViewModel @Inject constructor(
         LeafState(
             xFraction = Random.nextFloat(),
             yFraction = Random.nextFloat() * 0.3f,
-            speed = 0.002f + Random.nextFloat() * 0.004f
+            speed = 0.002f + Random.nextFloat() * 0.004f,
+            rotation = Random.nextFloat() * 360f
         )
     }
 

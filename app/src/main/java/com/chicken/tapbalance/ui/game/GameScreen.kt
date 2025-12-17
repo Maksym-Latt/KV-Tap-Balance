@@ -17,9 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -27,8 +24,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -36,15 +35,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chicken.tapbalance.R
-import com.chicken.tapbalance.ui.components.AppButton
+import com.chicken.tapbalance.ui.components.AppIconButton
 import com.chicken.tapbalance.ui.components.Fence
+import com.chicken.tapbalance.ui.components.FenceHeight
 import com.chicken.tapbalance.ui.components.OutlineText
 import com.chicken.tapbalance.ui.components.SkyBackground
-import com.chicken.tapbalance.ui.theme.OverlayDim
-import com.chicken.tapbalance.ui.theme.PanelBlue
-import com.chicken.tapbalance.ui.theme.TextStroke
-import com.chicken.tapbalance.ui.theme.TextWhite
-import kotlinx.coroutines.flow.StateFlow
+import com.chicken.tapbalance.ui.game.GameConstants.CHICKEN_BOTTOM_PADDING
+import com.chicken.tapbalance.ui.theme.AppGradients
 import kotlin.math.abs
 
 @Composable
@@ -68,7 +65,18 @@ fun GameScreen(
                 }
         ) {
             LeavesLayer(state)
-            GameContent(state, viewModel::pauseGame)
+
+            GameContent(state = state, onPause = viewModel::pauseGame)
+
+            ChickenOnFence(
+                state = state,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = FenceHeight - 16.dp)
+            )
+
+            Fence(modifier = Modifier.align(Alignment.BottomCenter))
+
             if (state.isPaused) {
                 PauseOverlay(
                     musicEnabled = state.musicEnabled,
@@ -101,7 +109,8 @@ private fun GameContent(state: GameUiState, onPause: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .padding(bottom = FenceHeight + GameConstants.CHICKEN_BOTTOM_PADDING),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -110,28 +119,25 @@ private fun GameContent(state: GameUiState, onPause: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onPause) {
-                Icon(Icons.Default.Pause, contentDescription = "Pause", tint = Color.White)
-            }
+            AppIconButton(
+                painter = rememberVectorPainter(image = Icons.Default.Pause),
+                contentDescription = "Pause",
+                onClick = onPause
+            )
             Column(horizontalAlignment = Alignment.End) {
                 OutlineText(
                     text = "Points: ${state.points}",
-                    color = TextWhite,
-                    outlineColor = TextStroke,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.End
                 )
                 OutlineText(
                     text = "Best: ${(state.bestScoreMs / 1000.0).formatSeconds()}s",
-                    color = TextWhite,
-                    outlineColor = TextStroke,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.End
                 )
             }
         }
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            WindHint(state)
-            ChickenOnFence(state)
-        }
+        WindHint(state)
         TimerFooter(state)
     }
 }
@@ -139,21 +145,20 @@ private fun GameContent(state: GameUiState, onPause: () -> Unit) {
 @Composable
 private fun WindHint(state: GameUiState) {
     AnimatedVisibility(visible = state.isWindActive) {
-        Box(
+        Row(
             modifier = Modifier
                 .padding(top = 12.dp)
                 .background(
-                    Brush.verticalGradient(
-                        listOf(Color(0xFF7CC9EC), Color(0xFF4BA9DA))
-                    ),
+                    AppGradients.wind,
                     RoundedCornerShape(12.dp)
                 )
-                .padding(horizontal = 10.dp, vertical = 6.dp)
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            IconBadge(painter = painterResource(id = R.drawable.ic_wind))
             OutlineText(
                 text = if (state.windDirection > 0) "Wind →" else "Wind ←",
-                color = TextWhite,
-                outlineColor = TextStroke,
                 fontSize = 16.sp
             )
         }
@@ -161,11 +166,11 @@ private fun WindHint(state: GameUiState) {
 }
 
 @Composable
-private fun ChickenOnFence(state: GameUiState) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+private fun ChickenOnFence(state: GameUiState, modifier: Modifier = Modifier) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         Image(
             painter = painterResource(
-                id = if (abs(state.chickenAngle) > 35f) state.currentSkin.fallRes else state.currentSkin.calmRes
+                id = if (abs(state.chickenAngle) > GameConstants.CHICKEN_TILT_FOR_CHANGE) state.currentSkin.fallRes else state.currentSkin.calmRes
             ),
             contentDescription = null,
             modifier = Modifier
@@ -173,7 +178,6 @@ private fun ChickenOnFence(state: GameUiState) {
                 .rotate(state.chickenAngle),
             contentScale = ContentScale.Fit
         )
-        Fence(modifier = Modifier.padding(top = 4.dp))
     }
 }
 
@@ -182,21 +186,16 @@ private fun TimerFooter(state: GameUiState) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         OutlineText(
             text = "Survival: ${(state.survivalTimeMs / 1000.0).formatSeconds()}s",
-            color = TextWhite,
-            outlineColor = TextStroke,
             fontSize = 18.sp
         )
         Spacer(modifier = Modifier.height(4.dp))
         OutlineText(
             text = "Tap left/right to balance!",
-            color = TextWhite,
-            outlineColor = TextStroke,
             fontSize = 14.sp
         )
         Spacer(modifier = Modifier.height(12.dp))
     }
 }
-
 
 @Composable
 private fun LeavesLayer(state: GameUiState) {
@@ -209,12 +208,31 @@ private fun LeavesLayer(state: GameUiState) {
                     top = (leaf.yFraction * 500).dp
                 )
         ) {
-            Surface(
-                modifier = Modifier.size(12.dp),
-                color = Color(0xFF8BC34A),
-                shape = RoundedCornerShape(50)
-            ) {}
+            Image(
+                painter = painterResource(id = R.drawable.ic_leaf),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(22.dp)
+                    .rotate(leaf.rotation),
+                colorFilter = ColorFilter.tint(Color(0xFF6BB34F))
+            )
         }
+    }
+}
+
+@Composable
+private fun IconBadge(painter: Painter) {
+    Box(
+        modifier = Modifier
+            .size(32.dp)
+            .background(Color.White.copy(alpha = 0.18f), RoundedCornerShape(10.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = Modifier.size(18.dp)
+        )
     }
 }
 
