@@ -1,0 +1,61 @@
+package com.chicken.balance.ui.components
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.offset
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.chicken.balance.ui.theme.AppGradients
+import com.chicken.balance.ui.theme.Fraunces
+
+@Composable
+fun OutlineText(
+    text: String,
+    modifier: Modifier = Modifier,
+    fillBrush: Brush = AppGradients.textFill,
+    outlineBrush: Brush = AppGradients.textStroke,
+    fontSize: TextUnit = 24.sp,
+    outlineWidth: Dp = 1.dp,
+    textAlign: TextAlign = TextAlign.Center,
+    maxLines: Int = Int.MAX_VALUE
+) {
+    val style = TextStyle(
+        fontFamily = Fraunces,
+        fontWeight = FontWeight.Normal,
+        fontSize = fontSize,
+        textAlign = textAlign,
+        brush = fillBrush
+    )
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        listOf(
+            Pair(outlineWidth, outlineWidth),
+            Pair(-outlineWidth, outlineWidth),
+            Pair(outlineWidth, -outlineWidth),
+            Pair(-outlineWidth, -outlineWidth),
+            Pair(outlineWidth, 0.dp),
+            Pair(-outlineWidth, 0.dp),
+            Pair(0.dp, outlineWidth),
+            Pair(0.dp, -outlineWidth)
+        ).forEach { (x, y) ->
+            androidx.compose.material3.Text(
+                text = text,
+                style = style.copy(brush = outlineBrush),
+                modifier = Modifier.offset(x, y),
+                maxLines = maxLines
+            )
+        }
+        androidx.compose.material3.Text(
+            text = text,
+            style = style,
+            maxLines = maxLines
+        )
+    }
+}
